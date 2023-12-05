@@ -7,16 +7,15 @@ import {
   uploadBytesResumable,
 } from 'firebase/storage';
 import { app } from '../firebase';
-import { 
+import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
   deleteUserFailure,
   deleteUserStart,
   deleteUserSuccess,
-  signOutUserFailure,
   signOutUserStart,
-  signOutUserSuccess } from '../redux/user/userSlice';
+} from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
 
 export default function Profile() {
@@ -192,9 +191,7 @@ export default function Profile() {
         >
           Delete account
         </span>
-        <span 
-          onClick={handleSignOut}
-          className='text-red-700 cursor-pointer'>
+        <span onClick={handleSignOut} className='text-red-700 cursor-pointer'>
           Sign out
         </span>
       </div>
