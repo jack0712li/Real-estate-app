@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ListingItem from '../components/Listingitem';
+import ListingItem from '../components/ListingItem';
 
 export default function Search() {
   const navigate = useNavigate();
@@ -18,7 +18,6 @@ export default function Search() {
   const [listings, setListings] = useState([]);
   const [showMore, setShowMore] = useState(false);
 
-  // Make the change of the search bar the same as the change of the URL and the search term on the side
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const searchTermFromUrl = urlParams.get('searchTerm');
