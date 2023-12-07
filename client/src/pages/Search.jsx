@@ -17,6 +17,7 @@ export default function Search() {
   const [loading, setLoading] = useState(false);
   const [listings, setListings] = useState([]);
   const [showMore, setShowMore] = useState(false);
+  const [visibleListingsCount, setVisibleListingsCount] = useState(8);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -27,7 +28,6 @@ export default function Search() {
     const offerFromUrl = urlParams.get('offer');
     const sortFromUrl = urlParams.get('sort');
     const orderFromUrl = urlParams.get('order');
-
     if (
       searchTermFromUrl ||
       typeFromUrl ||
@@ -61,6 +61,8 @@ export default function Search() {
       }
       setListings(data);
       setLoading(false);
+      setShowMore(data.length > visibleListingsCount);
+
     };
 
     fetchListings();
@@ -111,6 +113,7 @@ export default function Search() {
     urlParams.set('sort', sidebardata.sort);
     urlParams.set('order', sidebardata.order);
     const searchQuery = urlParams.toString();
+    setVisibleListingsCount(8);
     navigate(`/search?${searchQuery}`);
   };
 
@@ -125,7 +128,9 @@ export default function Search() {
     if (data.length < 9) {
       setShowMore(false);
     }
+
     setListings([...listings, ...data]);
+    setVisibleListingsCount(current => current + 8);
   };
   return (
     <div className='flex flex-col md:flex-row'>
@@ -244,11 +249,9 @@ export default function Search() {
           )}
 
           {!loading &&
-            listings &&
-            listings.map((listing) => (
+            listings.slice(0, visibleListingsCount).map((listing) => (
               <ListingItem key={listing._id} listing={listing} />
             ))}
-
           {showMore && (
             <button
               onClick={onShowMoreClick}
