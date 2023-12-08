@@ -1,10 +1,13 @@
 import mongoose from "mongoose";
 
 const favoriteSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        default: "My Favorites",
+    },
     listings: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Listing',
-        required: true
+        ref: 'Listing'
     }],
 });
 
