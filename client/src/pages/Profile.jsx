@@ -184,6 +184,11 @@ export default function Profile() {
     }
   };
 
+  /**
+   * Renders the user information section.
+   *
+   * @returns {JSX.Element} The user information section component.
+   */
   const userInfoSection = (
     <section className="pt-16 bg-blueGray-50">
       <div className="md:w-6/12 lg:w-6/12 px-4 mx-auto">
@@ -206,6 +211,22 @@ export default function Profile() {
                   " " +
                   (userInfo.lastname || "Musk")}
               </h3>
+              <div className="flex justify-center mb-2 text-slate-400">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6 mx-1"
+                >
+                  <path
+                    strokeLinecap="round"
+                    d="M16.5 12a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 10-2.636 6.364M16.5 12V8.25"
+                  />
+                </svg>
+                {userInfo.username}
+              </div>
               <div className="flex justify-center text-sm  leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -245,6 +266,11 @@ export default function Profile() {
     </section>
   );
 
+  /**
+   * Renders the profile edit section.
+   *
+   * @returns {JSX.Element} The profile edit section.
+   */
   const editProfileSection = (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -422,12 +448,44 @@ export default function Profile() {
         >
           View My Profile
         </Link>
-        <Link
-          className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
-          to={"/create-listing"}
-        >
-          Create Listing
-        </Link>
+        {currentUser.type === "seller" && (
+          <Link
+            className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
+            to={"/create-listing"}
+          >
+            Create Listing
+          </Link>
+        )}
+        {currentUser.type === "buyer" && (
+          <Link
+            className="bg-red-500 text-white p-3 rounded-lg uppercase text-center hover:opacity-95 flex items-center gap-2 justify-center"
+            to={"/#"}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+              />
+            </svg>
+            Create Favourite List
+          </Link>
+        )}
+        {currentUser.type === "admin" && (
+          <Link
+            className="bg-red-500 text-white p-3 rounded-lg uppercase text-center hover:opacity-95 flex items-center gap-2 justify-center"
+            to={"/#"}
+          >
+            Admin Portal
+          </Link>
+        )}
       </form>
       <div className="flex justify-between mt-5">
         <span
@@ -445,9 +503,11 @@ export default function Profile() {
       <p className="text-green-700 mt-5">
         {updateSuccess ? "User is updated successfully!" : ""}
       </p>
-      <button onClick={handleShowListings} className="text-green-700 w-full">
-        Show Listings
-      </button>
+      {currentUser.type === "seller" && (
+        <button onClick={handleShowListings} className="text-green-700 w-full">
+          Show Listings
+        </button>
+      )}
       <p className="text-red-700 mt-5">
         {showListingsError ? "Error showing listings" : ""}
       </p>
