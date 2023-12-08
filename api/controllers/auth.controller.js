@@ -88,12 +88,10 @@ export const signOut = async (req, res, next) => {
 export const setRole = async (req, res, next) => {
     const { userId } = req.params;
     const { type } = req.body;
-    console.log(userId, type);
     try {
         const updatedUser = await User.findByIdAndUpdate(userId, { type }, { new: true });
         if (!updatedUser) {
             console.log(userId, type);
-
             return next(errorHandler(404, "User not found"));
         }
         res.status(200).json('User role updated successfully');
