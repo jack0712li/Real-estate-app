@@ -27,10 +27,10 @@ export default function ChooseRole() {
     <div className='flex flex-col items-center justify-center h-screen gap-4 p-4'>
       <div className='text-center'>
         <h1 className='text-4xl font-bold text-gray-800'>
-          Welcome New User!
+          Hello, Adventurer!
         </h1>
-        <p className='text-xl text-gray-600 mt-2'>
-          What do you want to become?
+        <p className='text-xl text-gray-600 mt-2 animate-pulse'>
+          Choose Your Path
         </p>
       </div>
   
@@ -38,13 +38,13 @@ export default function ChooseRole() {
         <div className='flex flex-col items-center w-1/2 max-w-sm p-8 border-2 border-gray-300 rounded-lg cursor-pointer hover:bg-blue-100 hover:border-blue-500 transition-all'
              onClick={() => handleRoleSelection('buyer')}>
           <FaUserTie className='text-8xl text-blue-600 mb-4' />
-          <span className='text-2xl text-gray-700'>Become a Buyer</span>
+          <span className='text-2xl text-gray-700'>Explore as a Buyer</span>
         </div>
   
         <div className='flex flex-col items-center w-1/2 max-w-sm p-8 border-2 border-gray-300 rounded-lg cursor-pointer hover:bg-green-100 hover:border-green-500 transition-all'
              onClick={() => handleRoleSelection('seller')}>
           <FaStore className='text-8xl text-green-600 mb-4' />
-          <span className='text-2xl text-gray-700'>Become a Seller</span>
+          <span className='text-2xl text-gray-700'>Innovate as a Seller</span>
         </div>
       </div>
     </div>
