@@ -371,23 +371,6 @@ export default function Profile() {
         </div>
         <div>
           <label
-            htmlFor="lastname"
-            className="block text-sm font-medium text-gray-700"
-          >
-            {" "}
-            lastname{" "}
-          </label>
-          <input
-            type="text"
-            id="lastname"
-            placeholder="lastname"
-            defaultValue={currentUser.lastname || ""}
-            className="mt-1  p-3 w-full rounded-md border-gray-200 shadow-sm"
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label
             htmlFor="email"
             className="block text-sm font-medium text-gray-700"
           >
@@ -414,7 +397,6 @@ export default function Profile() {
           <input
             type="password"
             id="password"
-            placeholder="password"
             className="mt-1  p-3 w-full rounded-md border-gray-200 shadow-sm"
             onChange={handleChange}
           />
