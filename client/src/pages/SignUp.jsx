@@ -31,15 +31,15 @@ export default function SignUp() {
         }
       );
       const data = await res.json();
-      console.log(data);
       if(data.success === false) {
         setLoading(false);
         setError(data.message);
         return;
       }
+      localStorage.setItem('userId', data.userid);  
       setLoading(false);
       setError(null);
-      navigate('/sign-in');
+      navigate('/setrole');
     }
     catch(error) {
       setLoading(false);

@@ -9,7 +9,7 @@ export const signup = async (req, res, next) => {
     const newUser = new User({ username, email, password: hashedPassword });
     try {
         await newUser.save();
-        res.status(201).json('User created successfully!');
+        res.status(201).json({ userid: newUser._id, success: true });
     } catch (error) {
         next(error);
     }
@@ -33,11 +33,13 @@ export const login = async (req, res, next) => {
 export const google = async (req, res, next) => {
     try{
         const user = await User.findOne({email: req.body.email});
+        let isNewUser = false;
         if(user){
             const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY);
             const { password: pass, ...info } = user._doc;
             res.cookie('access_token', token, { httpOnly: true }).status(200).json(info);
         }else{
+            isNewUser = true;
             const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
             const hashedPassword = bcryptjs.hashSync(generatedPassword, 12);
             const newUser = new User({ username: req.body.name.split(" ").join("").toLowerCase()+ Math.random().toString(36).slice(-4) , 
@@ -47,7 +49,8 @@ export const google = async (req, res, next) => {
             await newUser.save();
             const token = jwt.sign({ id: newUser._id }, process.env.SECRET_KEY);
             const { password: pass, ...info } = newUser._doc;
-            res.cookie('access_token', token, { httpOnly: true }).status(200).json(info);
+            console.log(info);
+            res.cookie('access_token', token, { httpOnly: true }).status(200).json({ ...info, isNewUser });
 
         }
     }catch(error){
@@ -64,3 +67,20 @@ export const signOut = async (req, res, next) => {
         next(error);
     }
 }
+
+export const setRole = async (req, res, next) => {
+    const { userId } = req.params;
+    const { type } = req.body;
+    console.log(userId, type);
+    try {
+        const updatedUser = await User.findByIdAndUpdate(userId, { type }, { new: true });
+        if (!updatedUser) {
+            console.log(userId, type);
+
+            return next(errorHandler(404, "User not found"));
+        }
+        res.status(200).json('User role updated successfully');
+    } catch (error) {
+        next(error);
+    }
+};

@@ -21,9 +21,18 @@ export default function OAuth() {
                 },
                 body: JSON.stringify({name: result.user.displayName, email: result.user.email, photo: result.user.photoURL}),
             });
+            // const data = await res.json();
+            // console.log(data);
+            // dispatch(logInSuccess(data));
+            // navigate('/');
             const data = await res.json();
+            localStorage.setItem('userId', data._id);
             dispatch(logInSuccess(data));
-            navigate('/');
+            if (data.isNewUser) {
+                navigate('/setrole');  // 新用户导航到角色选择页面
+            } else {
+                navigate('/');  // 现有用户导航到主页或其他页面
+            }
         }catch(error){
             console.log("could not sign in with google",error)
         }
