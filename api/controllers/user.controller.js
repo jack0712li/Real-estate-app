@@ -2,6 +2,7 @@ import bcryptjs from 'bcryptjs';
 import User from '../models/user.model.js';
 import { errorHandler } from '../utils/error.js';
 import Listing from '../models/listing.model.js';
+import Favorite from '../models/favorite.model.js';
 
 export const test = (req, res) => {
     res.json({
@@ -69,6 +70,71 @@ export const getUser = async (req, res, next) => {
         if (!user) return next(errorHandler(404, 'User not found!'));
         const { password: pass, ...rest } = user._doc;
         res.status(200).json(rest);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const addFavorite = async (req, res, next) => {
+    const { userId, listingId } = req.body;
+
+
+    try {
+        let user = await User.findById(userId).populate('favorites');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        let favorite;
+        if (user.favorites) {
+            favorite = await Favorite.findById(user.favorites._id);
+        } else {
+            favorite = new Favorite({ listings: [] });
+            user.favorites = favorite._id;
+            await user.save();
+        }
+        favorite.listings.push(listingId);
+        await favorite.save();
+
+        res.status(200).json({ message: 'Listing added to favorites' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const removeFavorite = async (req, res, next) => {
+    const { userId, listingId } = req.body;
+
+    try {
+        const user = await User.findById(userId).populate('favorites');
+        if (!user || !user.favorites) {
+            return res.status(404).json({ message: 'Favorites not found' });
+        }
+
+        const favorite = await Favorite.findById(user.favorites._id);
+        favorite.listings.pull(listingId);
+        await favorite.save();
+
+        res.status(200).json({ message: 'Listing removed from favorites' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const checkIfFavorited = async (req, res, next) => {
+    const { userId, listingId } = req.params;
+    try {
+        const user = await User.findById(userId).populate('favorites');
+        if (!user) {
+            return res.status(404).json({ message: 'Favorites not found' });
+        }
+        if (!user.favorites) {
+            return res.status(200).json({ isFavorited: false });
+        }
+
+        const favorite = await Favorite.findById(user.favorites._id);
+        const isFavorited = favorite.listings.includes(listingId);
+        res.status(200).json({ isFavorited });
     } catch (error) {
         next(error);
     }
