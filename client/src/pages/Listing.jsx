@@ -12,8 +12,12 @@ import {
   FaMapMarkerAlt,
   FaParking,
   FaShare,
+  FaHeart,
+  FaRegHeart
 } from 'react-icons/fa';
+import { Link } from 'react-router-dom'
 import Contact from '../components/Contact';
+import { list } from 'firebase/storage';
 
 export default function Listing() {
   SwiperCore.use([Navigation]);
@@ -24,6 +28,8 @@ export default function Listing() {
   const [contact, setContact] = useState(false);
   const params = useParams();
   const { currentUser } = useSelector((state) => state.user);
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [listingOwner, setListingOwner] = useState(null);
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -39,13 +45,71 @@ export default function Listing() {
         setListing(data);
         setLoading(false);
         setError(false);
+        fetchListingOwner(data.userRef); 
       } catch (error) {
         setError(true);
         setLoading(false);
       }
     };
+    
+    const fetchListingOwner = async (userRef) => {
+      try {
+        const res = await fetch(`/api/user/${userRef}`);
+        const ownerData = await res.json();
+        if (ownerData.success === false) {
+          setError(true);
+          setLoading(false);
+          return;
+        }
+        setListingOwner(ownerData);
+      } catch (error) {
+        setError(true);
+        setLoading(false);
+      }
+    };
+    const checkIfFavorited = async () => {
+      if (!currentUser) {
+        console.error('No user is logged in.');
+        return;
+      }
+      let id = currentUser._id;
+
+      const response = await fetch(`/api/user/favorite/check/${id}/${params.listingId}`);
+      const data = await response.json();
+      if (response.ok) {
+        setIsFavorited(data.isFavorited);
+      }
+    };
+
+    if (currentUser) {
+      checkIfFavorited();
+    }
     fetchListing();
-  }, [params.listingId]);
+    console.log(listing);
+    console.log(listingOwner);
+  }, [params.listingId, currentUser]);
+
+
+  const handleFavoriteClick = async () => {
+    if (!currentUser) {
+      console.error('No user is logged in.');
+      return;
+    }
+    const endpoint = isFavorited ? '/api/user/favorite/remove' : '/api/user/favorite/add';
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId: currentUser._id, listingId: params.listingId }),
+    });
+    const data = await response.json();
+    if (data.ok == false) {
+      console.log(data.message);
+      return;
+    }
+    setIsFavorited(!isFavorited);
+  };
 
   return (
     <main>
@@ -86,13 +150,43 @@ export default function Listing() {
             </p>
           )}
           <div className='flex flex-col max-w-4xl mx-auto p-3 my-7 gap-4'>
-            <p className='text-2xl font-semibold'>
-              {listing.name} - ${' '}
-              {listing.offer
-                ? listing.discountPrice.toLocaleString('en-US')
-                : listing.regularPrice.toLocaleString('en-US')}
-              {listing.type === 'rent' && ' / month'}
-            </p>
+
+            <div className="flex justify-between items-center">
+              <p className="text-2xl font-semibold">
+                {listing.name} - ${' '}
+                {listing.offer
+                  ? listing.discountPrice.toLocaleString('en-US')
+                  : listing.regularPrice.toLocaleString('en-US')}
+                {listing.type === 'rent' && ' / month'}
+              </p>
+
+              <div className="flex items-center">
+                {currentUser && currentUser.type === 'buyer' && (
+                  <button
+                    onClick={handleFavoriteClick}
+                    className="mr-8"
+                    style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                  >
+                    {isFavorited ?
+                      <FaHeart className="text-red-500 text-3xl" /> :
+                      <FaRegHeart className="text-3xl" />}
+                  </button>
+                )}
+
+                {/* 创建者头像 */}
+                {listing.userRef && (
+                  <Link to={`/`}>
+                    <img
+                      src={listingOwner?.avatar || '/default-avatar.png'}
+                      alt="Creator's Avatar"
+                      className="rounded-full"
+                      style={{ width: '3em', height: '3em', objectFit: 'cover' }}
+                    />
+                  </Link>
+                )}
+              </div>
+            </div>
+
             <p className='flex items-center mt-6 gap-2 text-slate-600  text-sm'>
               <FaMapMarkerAlt className='text-green-700' />
               {listing.address}

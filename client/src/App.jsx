@@ -12,7 +12,7 @@ import UpdateListing from './pages/UpdateListing';
 import Listing from './pages/Listing';
 import Search from './pages/Search';
 import Setrole from './pages/SetRole';
-
+import Personal from './pages/Personal';
 export default function App() {
   return <BrowserRouter>
   <Headers />
@@ -29,6 +29,7 @@ export default function App() {
         <Route path="/create-listing" element={<CreateListing />} />
         <Route path="/update-listing/:listingId" element={<UpdateListing />} />
         <Route path="/setrole" element={<Setrole />} />
+        <Route path="/personal" element={<Personal />} />
       </Route>
     </Routes>
   </BrowserRouter>
