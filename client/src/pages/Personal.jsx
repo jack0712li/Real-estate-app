@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import ListingItem from '../components/ListingItem';
+import { Link } from 'react-router-dom';
 
 export default function FavoriteListings() {
     const [favoriteListings, setFavoriteListings] = useState([]);
@@ -8,31 +9,43 @@ export default function FavoriteListings() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const { currentUser } = useSelector((state) => state.user);
+    const [SellerListings, setSellerListings] = useState([]);
 
     useEffect(() => {
-        const fetchFavoriteListings = async () => {
+        const fetchListings = async () => {
             if (!currentUser) return;
             setLoading(true);
 
             try {
-                const res = await fetch(`/api/user/favorite/${currentUser._id}`);
-                const data = await res.json();
-                if (data.favoriteListings) {
-                    setFavoriteListings(data.favoriteListings);
-                    setFavoriteName(data.name);
-                } else {
-                    setError('No favorite listings found');
+                if (currentUser.type === 'buyer') {
+                    const res = await fetch(`/api/user/favorite/${currentUser._id}`);
+                    const data = await res.json();
+                    if (data.favoriteListings) {
+                        setFavoriteListings(data.favoriteListings);
+                        setFavoriteName(data.name);
+                    } else {
+                        setError('No favorite listings found');
+                    }
+                } else if (currentUser.type === 'seller') {
+                    const res = await fetch(`/api/user/listings/${currentUser._id}`);
+                    const data = await res.json();
+                    console.log(data);
+                    if (!data) {
+                        setError('Failed to fetch seller listings');
+                    } else {
+                        setSellerListings(data);
+                    }
                 }
             } catch (err) {
-                setError('Failed to fetch favorite listings');
+                setError(err.message);
             } finally {
                 setLoading(false);
             }
         };
-        if (currentUser.type === 'buyer') {
-            fetchFavoriteListings();
-        }
+
+        fetchListings();
     }, [currentUser]);
+
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
@@ -56,6 +69,25 @@ export default function FavoriteListings() {
             }
         } catch (error) {
             console.error('Failed to remove favorite listing', error);
+        }
+    };
+
+    const handleListingDelete = async (listingId) => {
+        try {
+            const res = await fetch(`/api/listing/delete/${listingId}`, {
+                method: 'DELETE',
+            });
+            const data = await res.json();
+            if (data.success === false) {
+                console.log(data.message);
+                return;
+            }
+
+            setSellerListings((prev) =>
+                prev.filter((listing) => listing._id !== listingId)
+            );
+        } catch (error) {
+            console.log(error.message);
         }
     };
 
@@ -89,16 +121,46 @@ export default function FavoriteListings() {
                                 </button>
                             </div>
                         ))}
-                    </div>  
+                    </div>
                 </div>
             </div>
         );
     }
     if (currentUser.type === 'seller') {
         return (
-            <div>
-
+          <div className='ml-4'>
+            <h1 className="text-4xl font-bold mt-4 mb-6 text-slate-500">
+              Your Listings
+            </h1>
+            <div className='flex flex-wrap gap-4'>
+              {SellerListings.map((listing) => (
+                <div key={listing._id} className="mb-4">
+                  <ListingItem listing={listing} />
+      
+                  <div className="flex justify-between mt-2">
+                    <Link to={`/update-listing/${listing._id}`}>
+                      <button
+                        className="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex-1"
+                      >
+                        Edit
+                      </button>
+                    </Link>
+                    <div className="flex-grow-0 mx-2"></div>
+                    <button
+                      onClick={() => handleListingDelete(listing._id)}
+                      className="bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-600 flex-1"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
+          </div>
         );
-    }
+      }
+      if (currentUser.type === 'admin') {
+      }
+      
+      
 }
