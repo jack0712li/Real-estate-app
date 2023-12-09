@@ -79,7 +79,7 @@ export const getUserFavoriteListings = async (req, res, next) => {
 
             const favoriteListings = await Listing.find({ '_id': { $in: favorite.listings } });
 
-            res.status(200).json(favoriteListings);
+            res.status(200).json({favoriteListings, name: favorite.name});
         } catch (error) {
             next(error);
         }
