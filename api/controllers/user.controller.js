@@ -64,6 +64,30 @@ export const getUserListings = async (req, res, next) => {
     }
 };
 
+export const getUserFavoriteListings = async (req, res, next) => {
+    if (req.user.id === req.params.id) {
+        try {
+            const user = await User.findById(req.user.id).populate('favorites');
+            if (!user) {
+                return next(errorHandler(404, 'User not found'));
+            }
+
+            if (!user.favorites) {
+                return res.status(200).json([]);
+            }
+            const favorite = await Favorite.findById(user.favorites._id);
+
+            const favoriteListings = await Listing.find({ '_id': { $in: favorite.listings } });
+
+            res.status(200).json(favoriteListings);
+        } catch (error) {
+            next(error);
+        }
+    } else {
+        return next(errorHandler(401, 'You can only view your own listings!'));
+    }
+};
+
 export const getUser = async (req, res, next) => {
     try {
         const user = await User.findById(req.params.id);

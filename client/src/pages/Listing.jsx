@@ -161,7 +161,6 @@ export default function Listing() {
               </p>
 
               <div className="flex items-center">
-                {/* 收藏图标，仅当用户角色为'buyer'时显示 */}
                 {currentUser && currentUser.type === 'buyer' && (
                   <button
                     onClick={handleFavoriteClick}
