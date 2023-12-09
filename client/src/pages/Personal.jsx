@@ -68,17 +68,28 @@ export default function FavoriteListings() {
                     </h1>
                     <div className='flex flex-wrap gap-4'>
                         {favoriteListings.map(listing => (
-                            <div key={listing._id} className="mb-4">
-                                <ListingItem listing={listing} />
+                            <div key={listing?._id || Math.random()} className="mb-4">
+                                {listing ? (
+                                    <ListingItem listing={listing} />
+                                ) : (
+                                    <div className='bg-white shadow-md hover:shadow-lg transition-shadow overflow-hidden rounded-lg w-full sm:w-[330px]'>
+                                        <div className='h-[320px] sm:h-[220px] w-full object-cover bg-gray-300'></div>
+                                        <div className='p-3 flex flex-col gap-2 w-full'>
+                                            <p className='text-lg font-semibold text-slate-700'>
+                                                This estate is no longer available.
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
                                 <button
-                                    onClick={() => handleDelete(listing._id)}
+                                    onClick={() => handleDelete(listing?._id)}
                                     className="w-full bg-red-700 text-white p-2 rounded-lg hover:bg-red-600"
                                 >
                                     Remove
                                 </button>
                             </div>
                         ))}
-                    </div>
+                    </div>  
                 </div>
             </div>
         );
