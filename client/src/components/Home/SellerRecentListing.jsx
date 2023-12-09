@@ -31,7 +31,7 @@ export default function CreateListing(props) {
             <ul className="grid grid-cols-2 gap-4">
               {recentListings.map((listing, index) => (
                 <li key={index}>
-                  <a href="#" className="group block">
+                  <Link to={`/listing/${listing._id}`} className="group block">
                     <img
                       src={listing.imageUrls[0]}
                       alt=""
@@ -40,9 +40,7 @@ export default function CreateListing(props) {
 
                     <div className="mt-3">
                       <h3 className="font-medium text-gray-900 group-hover:underline group-hover:underline-offset-4">
-                        <Link to={`/listing/${listing._id}`}>
-                          {listing.name}
-                        </Link>
+                        {listing.name}
                       </h3>
 
                       <p className="mt-1 text-sm text-gray-700">
@@ -50,7 +48,7 @@ export default function CreateListing(props) {
                         {listing.type === "rent" && " / month"}
                       </p>
                     </div>
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

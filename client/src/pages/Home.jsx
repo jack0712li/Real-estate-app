@@ -43,7 +43,7 @@ export default function Home() {
         const data = await res.json();
         setSaleListings(data);
       } catch (error) {
-        log(error);
+        console.log(error);
       }
     };
     fetchOfferListings();
@@ -55,14 +55,13 @@ export default function Home() {
     try {
       const res = await fetch(getListingsByUserIdURL);
       const data = await res.json();
-      console.log(data);
       return data;
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
-    if (currentUser.type === "seller") {
+    if (currentUser && currentUser.type === "seller") {
       getListingsByUserId().then((data) => {
         setRecentListings(data);
       });
@@ -113,7 +112,7 @@ export default function Home() {
       {/* listing results for offer, sale and rent */}
 
       {/* render recent listing of current user if role is seller*/}
-      {currentUser.type === "seller" && (
+      {currentUser && currentUser.type === "seller" && (
         <SellerRecentListing recentListings={recentListings} />
       )}
 
