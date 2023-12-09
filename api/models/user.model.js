@@ -8,6 +8,30 @@ const userSchema = new mongoose.Schema({
         minlength: 3,
         maxlength: 20
     },
+    firstname: {
+        type: String,
+        required: false,
+        unique: false,
+        minlength: 1,
+    },
+    lastname: {
+        type: String,
+        required: false,
+        unique: false,
+        minlength: 1,
+    },
+    location: {
+        type: String,
+        required: false,
+        unique: false,
+        minlength: 1,
+    },
+    description: {
+        type: String,
+        required: false,
+        unique: false,
+        maxlength: 1024
+    },
     email: {
         type: String,
         required: true,
@@ -29,7 +53,6 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Favorite'
     },
-
     type: {
         type: String,
         enum: ['buyer', 'seller', 'admin'],
