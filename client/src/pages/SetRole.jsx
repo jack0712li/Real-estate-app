@@ -1,15 +1,21 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaUserTie, FaStore } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateUserStart, updateUserSuccess, updateUserFailure } from '../redux/user/userSlice';
+
 
 export default function ChooseRole() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { currentUser, loading, error } = useSelector((state) => state.user);
 
   const handleRoleSelection = async (role) => {
     // 这里发送请求到后端，更新用户的类型
     // 假设用户ID存储在localStorage或通过其他方式获得
     const userId = localStorage.getItem('userId');
     try {
+      dispatch(updateUserStart());
       await fetch(`/api/auth/signup/setRole/${userId}/`, {
         method: 'POST',
         headers: {
@@ -17,10 +23,13 @@ export default function ChooseRole() {
         },
         body: JSON.stringify({ type: role }),
       });
+      const updatedUser = { ...currentUser, type: role };
+      dispatch(updateUserSuccess(updatedUser));
       console.log('Become a', role, 'successfully!');
       navigate('/');  
     } catch (error) {
       console.error('Error updating role:', error);
+      dispatch(updateUserFailure(error.toString()));
     }
   };
   return (
