@@ -14,9 +14,6 @@ export default function Home() {
   const [recentListings, setRecentListings] = useState([]);
   const [saleListings, setSaleListings] = useState([]);
   const [rentListings, setRentListings] = useState([]);
-  const [adminListings, setAdminListings] = useState([]);
-  const [loadedListingsCount, setLoadedListingsCount] = useState(8);
-  const [hasMoreListings, setHasMoreListings] = useState(true);
 
   SwiperCore.use([Navigation]);
   useEffect(() => {
@@ -72,81 +69,10 @@ export default function Home() {
     }
   }, []);
 
-  const fetchAdminListings = async () => {
-    if (!currentUser || currentUser.type !== 'admin') return;
-  
-    try {
-      const res = await fetch(`/api/listing/getAll?limit=8`); // Using getListings endpoint
-      const data = await res.json();
-      setAdminListings(data);
-    } catch (error) {
-      console.error('Error fetching admin listings:', error);
-    }
-  };
-  
-  useEffect(() => {
-    if (currentUser && currentUser.type === "admin") {
-      fetchAdminListings();
-    }
-  }, [currentUser]);
-
-  const loadMoreListings = async () => {
-    try {
-      // Fetch the total number of listings
-      const totalRes = await fetch('/api/listing/count');
-      const { count: totalListingsCount } = await totalRes.json();
-  
-      const nextStart = adminListings.length;
-      const limit = totalListingsCount - nextStart;
-      if (limit <= 0) {
-        setHasMoreListings(false);
-        return;
-      }
-  
-      const res = await fetch(`/api/listing/getAll?start=${nextStart}&limit=${limit}`);
-      const newData = await res.json();
-      console.log(newData);
-  
-      // Check if newData is empty (no more listings to load)
-      if (newData.length === 0) {
-        setHasMoreListings(false);
-        return;
-      }
-  
-      // Append new listings to the existing ones
-      setAdminListings(prevListings => [...prevListings, ...newData]);
-  
-      // Update the count of loaded listings
-      setLoadedListingsCount(prevCount => prevCount + newData.length);
-    } catch (error) {
-      console.error('Error loading more listings:', error);
-    }
-  };
-  
-  
-
   return (
     <div>
       {/* top */}
-      {/* render recent added listing from all users if role is admin*/}
-      {currentUser && currentUser.type === 'admin' && (
-        <div>
-          <h2>Admin Panel - All Listings</h2>
-          <div className="max-w-6xl mx-auto p-3 flex flex-col gap-8 my-10">
-            {adminListings.map(listing => (
-              <div key={listing._id}>
-                <ListingItem listing={listing} />
-                {/* Add Edit and Delete buttons here */}
-              </div>
-            ))}
-          </div>
-          {hasMoreListings && adminListings.length >= loadedListingsCount && (
-            <button onClick={loadMoreListings}>Load More</button>
-          )}
-        </div>
-      )}
-
-      {(!currentUser || currentUser.type !== 'admin') && (
+      
       <div>
         <div className="flex flex-col gap-6 p-28 px-3 max-w-6xl mx-auto">
           <h1 className="text-slate-700 font-bold text-3xl lg:text-6xl">
@@ -255,8 +181,7 @@ export default function Home() {
             </div>
           )}
         </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

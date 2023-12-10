@@ -463,9 +463,9 @@ export default function Profile() {
         {currentUser.type === "admin" && (
           <Link
             className="bg-red-500 text-white p-3 rounded-lg uppercase text-center hover:opacity-95 flex items-center gap-2 justify-center"
-            to={`/personal/${currentUser._id}`}
+            to={`/personal`}
           >
-            View My Recent Edits
+            View All Listings
           </Link>
         )}
       </form>
