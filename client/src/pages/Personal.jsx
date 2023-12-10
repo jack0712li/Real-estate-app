@@ -37,7 +37,7 @@ export default function FavoriteListings() {
                         setFavoriteListings(data.favoriteListings);
                         setFavoriteName(data.name);
                     } else {
-                        setError('No favorite listings found');
+                        setError('You have not add anyting to your favorite list yet!');
                     }
                 } else if (currentUser.type === 'seller') {
                     const res = await fetch(`/api/user/listings/${currentUser._id}`);
@@ -61,8 +61,10 @@ export default function FavoriteListings() {
     }, [currentUser]);
 
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>{error}</p>;
+    if (loading) return <h1 className="text-4xl font-bold mt-4 mb-6 text-slate-700 ml-4">Loading...</h1>;
+    if (error) return <h1 className="text-4xl font-bold mt-4 mb-6 text-slate-700 ml-4">
+        {error}
+    </h1>
 
 
     const handleDelete = async (listingId) => {
@@ -107,37 +109,37 @@ export default function FavoriteListings() {
 
     const loadMoreListings = async () => {
         try {
-          // Fetch the total number of listings
-          const totalRes = await fetch('/api/listing/count');
-          const { count: totalListingsCount } = await totalRes.json();
-      
-          const nextStart = adminListings.length;
-          const limit = totalListingsCount - nextStart;
-          if (limit <= 0) {
-            setHasMoreListings(false);
-            return;
-          }
-      
-          const res = await fetch(`/api/listing/getAll?start=${nextStart}&limit=${limit}`);
-          const newData = await res.json();
-      
-          // Check if newData is empty (no more listings to load)
-          if (newData.length === 0) {
-            setHasMoreListings(false);
-            return;
-          }
-      
-          // Append new listings to the existing ones
-          setAdminListings(prevListings => [...prevListings, ...newData]);
-      
-          // Update the count of loaded listings
-          setLoadedListingsCount(prevCount => prevCount + newData.length);
-        } catch (error) {
-          console.error('Error loading more listings:', error);
-        }
-      };
+            // Fetch the total number of listings
+            const totalRes = await fetch('/api/listing/count');
+            const { count: totalListingsCount } = await totalRes.json();
 
-      const handleAdminListingDelete = async (listingId) => {
+            const nextStart = adminListings.length;
+            const limit = totalListingsCount - nextStart;
+            if (limit <= 0) {
+                setHasMoreListings(false);
+                return;
+            }
+
+            const res = await fetch(`/api/listing/getAll?start=${nextStart}&limit=${limit}`);
+            const newData = await res.json();
+
+            // Check if newData is empty (no more listings to load)
+            if (newData.length === 0) {
+                setHasMoreListings(false);
+                return;
+            }
+
+            // Append new listings to the existing ones
+            setAdminListings(prevListings => [...prevListings, ...newData]);
+
+            // Update the count of loaded listings
+            setLoadedListingsCount(prevCount => prevCount + newData.length);
+        } catch (error) {
+            console.error('Error loading more listings:', error);
+        }
+    };
+
+    const handleAdminListingDelete = async (listingId) => {
         try {
             const res = await fetch(`/api/listing/delete/${listingId}`, {
                 method: 'DELETE',
@@ -192,38 +194,38 @@ export default function FavoriteListings() {
     }
     if (currentUser.type === 'seller') {
         return (
-          <div className='ml-4'>
-            <h1 className="text-4xl font-bold mt-4 mb-6 text-slate-500">
-              Your Listings
-            </h1>
-            <div className='flex flex-wrap gap-4'>
-              {SellerListings.map((listing) => (
-                <div key={listing._id} className="mb-4">
-                  <ListingItem listing={listing} />
-      
-                  <div className="flex justify-between mt-2">
-                    <Link to={`/update-listing/${listing._id}`}>
-                      <button
-                        className="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex-1"
-                      >
-                        Edit
-                      </button>
-                    </Link>
-                    <div className="flex-grow-0 mx-2"></div>
-                    <button
-                      onClick={() => handleListingDelete(listing._id)}
-                      className="bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-600 flex-1"
-                    >
-                      Remove
-                    </button>
-                  </div>
+            <div className='ml-4'>
+                <h1 className="text-4xl font-bold mt-4 mb-6 text-slate-500">
+                    Your Listings
+                </h1>
+                <div className='flex flex-wrap gap-4'>
+                    {SellerListings.map((listing) => (
+                        <div key={listing._id} className="mb-4">
+                            <ListingItem listing={listing} />
+
+                            <div className="flex justify-between mt-2">
+                                <Link to={`/update-listing/${listing._id}`}>
+                                    <button
+                                        className="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex-1"
+                                    >
+                                        Edit
+                                    </button>
+                                </Link>
+                                <div className="flex-grow-0 mx-2"></div>
+                                <button
+                                    onClick={() => handleListingDelete(listing._id)}
+                                    className="bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-600 flex-1"
+                                >
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                    ))}
                 </div>
-              ))}
             </div>
-          </div>
         );
-      }
-      if (currentUser.type === 'admin') {
+    }
+    if (currentUser.type === 'admin') {
         return (
             <div>
                 <h1>All Listings</h1>
@@ -242,7 +244,7 @@ export default function FavoriteListings() {
                                 <button
                                     onClick={() => handleAdminListingDelete(listing._id)}
                                     className="bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-600 flex-1"
-                                    >
+                                >
                                     Remove
                                 </button>
                             </div>

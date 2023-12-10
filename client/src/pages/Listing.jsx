@@ -93,21 +93,37 @@ export default function Listing() {
       console.error('No user is logged in.');
       return;
     }
-    const endpoint = isFavorited ? '/api/user/favorite/remove' : '/api/user/favorite/add';
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ userId: currentUser._id, listingId: params.listingId }),
-    });
-    const data = await response.json();
-    if (data.ok == false) {
-      console.log(data.message);
-      return;
-    }
-    setIsFavorited(!isFavorited);
-  };
+
+    if (isFavorited){
+      const response = await fetch('/api/user/favorite/remove', {
+        method: 'Delete',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: currentUser._id, listingId: params.listingId }),
+      });
+      const data = await response.json();
+      if (data.ok == false) {
+        console.log(data.message);
+        return;
+      }
+      setIsFavorited(!isFavorited);
+    } else if (!isFavorited){
+      const response = await fetch('/api/user/favorite/add', {
+        method: 'Put',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: currentUser._id, listingId: params.listingId }),
+      });
+      const data = await response.json();
+      if (data.ok == false) {
+        console.log(data.message);
+        return;
+      }
+      setIsFavorited(!isFavorited);
+    }};
+
 
   return (
     <main>
