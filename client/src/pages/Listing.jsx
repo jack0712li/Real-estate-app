@@ -85,8 +85,6 @@ export default function Listing() {
       checkIfFavorited();
     }
     fetchListing();
-    console.log(listing);
-    console.log(listingOwner);
   }, [params.listingId, currentUser]);
 
 
@@ -173,7 +171,7 @@ export default function Listing() {
                   </button>
                 )}
 
-                {/* 创建者头像 */}
+                {/* Creat user's avatar */}
                 {listingOwner && (
                   <Link to={`/profile/${listingOwner._id}`}>
                     <img
