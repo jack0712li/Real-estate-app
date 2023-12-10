@@ -79,11 +79,22 @@ export const getUserFavoriteListings = async (req, res, next) => {
             if (!user.favorites) {
                 return res.status(200).json([]);
             }
+
+            const amount = parseInt(req.query.limit, 10);
+
+            const sort = req.query.sort || "desc";
+            const sortOrder = sort === "asc" ? 1 : -1;
+
+            const sortBy = req.query.sortBy || "create";
+            const sortByOptions = sortBy === "create" ? "createdAt" : "updatedAt";
+
             const favorite = await Favorite.findById(user.favorites._id);
 
-            const favoriteListings = await Listing.find({ '_id': { $in: favorite.listings } });
+            const favoriteListings = await Listing.find({ '_id': { $in: favorite.listings } })
+                .sort({ [sortByOptions]: sortOrder })
+                .limit(amount);
 
-            res.status(200).json({favoriteListings, name: favorite.name});
+            res.status(200).json({ favoriteListings, name: favorite.name });
         } catch (error) {
             next(error);
         }
