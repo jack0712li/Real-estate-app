@@ -432,10 +432,18 @@ export default function Profile() {
         </Link>
         {currentUser.type === "seller" && (
           <Link
-            className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
+            className="bg-blue-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
             to={"/create-listing"}
           >
             Create Listing
+          </Link>
+        )}
+        {currentUser.type === "seller" && (
+          <Link
+            className="bg-yellow-500 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
+            to={"/personal"}
+          >
+            Show Your Listing
           </Link>
         )}
         {currentUser.type === "buyer" && (
@@ -485,16 +493,16 @@ export default function Profile() {
       <p className="text-green-700 mt-5">
         {updateSuccess ? "User is updated successfully!" : ""}
       </p>
-      {currentUser.type === "seller" && (
+      {/* {currentUser.type === "seller" && (
         <button onClick={handleShowListings} className="text-green-700 w-full">
           Show Listings
         </button>
-      )}
-      <p className="text-red-700 mt-5">
+      )} */}
+      {/* <p className="text-red-700 mt-5">
         {showListingsError ? "Error showing listings" : ""}
-      </p>
+      </p> */}
 
-      {userListings && userListings.length > 0 && (
+      {/* {userListings && userListings.length > 0 && (
         <div className="flex flex-col gap-4">
           <h1 className="text-center mt-7 text-2xl font-semibold">
             Your Listings
@@ -532,7 +540,7 @@ export default function Profile() {
             </div>
           ))}
         </div>
-      )}
+      )} */}
     </div>
   );
 
