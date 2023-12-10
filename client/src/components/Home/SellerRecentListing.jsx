@@ -18,12 +18,12 @@ export default function CreateListing(props) {
                 </p>
               </header>
 
-              <a
-                href="#"
+              <Link
+                to={"/personal"}
                 className="mt-8 inline-block rounded border border-gray-900 bg-gray-900 px-12 py-3 text-sm font-medium text-white transition hover:shadow focus:outline-none focus:ring"
               >
                 Recent listings
-              </a>
+              </Link>
             </div>
           </div>
 

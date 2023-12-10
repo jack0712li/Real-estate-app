@@ -85,8 +85,6 @@ export default function Listing() {
       checkIfFavorited();
     }
     fetchListing();
-    console.log(listing);
-    console.log(listingOwner);
   }, [params.listingId, currentUser]);
 
 
@@ -173,11 +171,11 @@ export default function Listing() {
                   </button>
                 )}
 
-                {/* 创建者头像 */}
-                {listing.userRef && (
-                  <Link to={`/`}>
+                {/* Creat user's avatar */}
+                {listingOwner && (
+                  <Link to={`/profile/${listingOwner._id}`}>
                     <img
-                      src={listingOwner?.avatar || '/default-avatar.png'}
+                      src={listingOwner.avatar || '/default-avatar.png'}
                       alt="Creator's Avatar"
                       className="rounded-full"
                       style={{ width: '3em', height: '3em', objectFit: 'cover' }}
@@ -227,7 +225,7 @@ export default function Listing() {
                 {listing.furnished ? 'Furnished' : 'Unfurnished'}
               </li>
             </ul>
-            {currentUser && listing.userRef !== currentUser._id && !contact && (
+            {currentUser && listing.userRef !== currentUser._id && currentUser.type !== 'seller' && !contact && (
               <button
                 onClick={() => setContact(true)}
                 className='bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 p-3'

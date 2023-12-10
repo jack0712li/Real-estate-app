@@ -29,7 +29,6 @@ export default function FavoriteListings() {
                 } else if (currentUser.type === 'seller') {
                     const res = await fetch(`/api/user/listings/${currentUser._id}`);
                     const data = await res.json();
-                    console.log(data);
                     if (!data) {
                         setError('Failed to fetch seller listings');
                     } else {
