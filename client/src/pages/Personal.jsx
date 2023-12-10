@@ -10,6 +10,19 @@ export default function FavoriteListings() {
     const [error, setError] = useState(null);
     const { currentUser } = useSelector((state) => state.user);
     const [SellerListings, setSellerListings] = useState([]);
+    const [adminListings, setAdminListings] = useState([]);
+    const [loadedListingsCount, setLoadedListingsCount] = useState(8);
+    const [hasMoreListings, setHasMoreListings] = useState(true);
+
+    const fetchAdminListings = async () => {
+        try {
+            const res = await fetch(`/api/listing/getAll?limit=8`);
+            const data = await res.json();
+            setAdminListings(data);
+        } catch (error) {
+            console.error('Error fetching admin listings:', error);
+        }
+    };
 
     useEffect(() => {
         const fetchListings = async () => {
@@ -34,6 +47,8 @@ export default function FavoriteListings() {
                     } else {
                         setSellerListings(data);
                     }
+                } else if (currentUser.type === 'admin') {
+                    fetchAdminListings();
                 }
             } catch (err) {
                 setError(err.message);
@@ -87,6 +102,56 @@ export default function FavoriteListings() {
             );
         } catch (error) {
             console.log(error.message);
+        }
+    };
+
+    const loadMoreListings = async () => {
+        try {
+          // Fetch the total number of listings
+          const totalRes = await fetch('/api/listing/count');
+          const { count: totalListingsCount } = await totalRes.json();
+      
+          const nextStart = adminListings.length;
+          const limit = totalListingsCount - nextStart;
+          if (limit <= 0) {
+            setHasMoreListings(false);
+            return;
+          }
+      
+          const res = await fetch(`/api/listing/getAll?start=${nextStart}&limit=${limit}`);
+          const newData = await res.json();
+      
+          // Check if newData is empty (no more listings to load)
+          if (newData.length === 0) {
+            setHasMoreListings(false);
+            return;
+          }
+      
+          // Append new listings to the existing ones
+          setAdminListings(prevListings => [...prevListings, ...newData]);
+      
+          // Update the count of loaded listings
+          setLoadedListingsCount(prevCount => prevCount + newData.length);
+        } catch (error) {
+          console.error('Error loading more listings:', error);
+        }
+      };
+
+      const handleAdminListingDelete = async (listingId) => {
+        try {
+            const res = await fetch(`/api/listing/delete/${listingId}`, {
+                method: 'DELETE',
+            });
+            const data = await res.json();
+            if (data.success === false) {
+                console.error(data.message);
+                return;
+            }
+
+            // Re-fetch listings to update the state
+            await fetchAdminListings();
+        } catch (error) {
+            console.error('Error deleting listing:', error);
         }
     };
 
@@ -159,7 +224,35 @@ export default function FavoriteListings() {
         );
       }
       if (currentUser.type === 'admin') {
-      }
-      
-      
+        return (
+            <div>
+                <h1>All Listings</h1>
+                <div className="max-w-6xl mx-auto p-3 flex flex-col gap-8 my-10">
+                    {adminListings.map(listing => (
+                        <div key={listing._id} className="flex justify-between items-center">
+                            <ListingItem listing={listing} />
+                            <div>
+                                <Link to={`/update-listing/${listing._id}`}>
+                                    <button
+                                        className="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex-1"
+                                    >
+                                        Edit
+                                    </button>
+                                </Link>
+                                <button
+                                    onClick={() => handleAdminListingDelete(listing._id)}
+                                    className="bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-600 flex-1"
+                                    >
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                {hasMoreListings && adminListings.length >= loadedListingsCount && (
+                    <button onClick={loadMoreListings}>Load More</button>
+                )}
+            </div>
+        );
+    }
 }
