@@ -55,30 +55,6 @@ export default function CreateListing(props) {
             </div>
           </div>
         )}
-      {role === "buyer" && !recentActivity && (
-        <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-          <div className="grid place-content-center rounded bg-gray-100 p-6 sm:p-8">
-            <div className="mx-auto max-w-md text-center lg:text-center">
-              <header>
-                <h2 className="text-xl font-bold text-gray-900 sm:text-3xl">
-                  Selling Houses, Creating Dreams
-                </h2>
-
-                <p className="mt-4 text-gray-500">
-                  You have no listings. Let's create your first one!
-                </p>
-              </header>
-
-              <Link
-                to={"/create-listing"}
-                className="mt-8 inline-block rounded border border-gray-900 bg-gray-900 px-12 py-3 text-sm font-medium text-white transition hover:shadow focus:outline-none focus:ring"
-              >
-                Create Listing
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
       {role === "seller" && recentActivity && recentActivity.length > 0 && (
         <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:items-stretch">
