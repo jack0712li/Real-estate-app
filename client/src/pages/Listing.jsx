@@ -174,10 +174,10 @@ export default function Listing() {
                 )}
 
                 {/* 创建者头像 */}
-                {listing.userRef && (
-                  <Link to={`/`}>
+                {listingOwner && (
+                  <Link to={`/profile/${listingOwner._id}`}>
                     <img
-                      src={listingOwner?.avatar || '/default-avatar.png'}
+                      src={listingOwner.avatar || '/default-avatar.png'}
                       alt="Creator's Avatar"
                       className="rounded-full"
                       style={{ width: '3em', height: '3em', objectFit: 'cover' }}
