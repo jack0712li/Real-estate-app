@@ -13,6 +13,7 @@ export default function FavoriteListings() {
     const [adminListings, setAdminListings] = useState([]);
     const [loadedListingsCount, setLoadedListingsCount] = useState(8);
     const [hasMoreListings, setHasMoreListings] = useState(true);
+    const [recentActivity, setRecentActivity] = useState([]);
 
     const fetchAdminListings = async () => {
         try {
@@ -31,21 +32,22 @@ export default function FavoriteListings() {
 
             try {
                 if (currentUser.type === 'buyer') {
+                    // Fetch favorites for buyer
                     const res = await fetch(`/api/user/favorite/${currentUser._id}`);
                     const data = await res.json();
-                    if (data.favoriteListings) {
-                        setFavoriteListings(data.favoriteListings);
-                        setFavoriteName(data.name);
+                    setFavoriteListings(data.favoriteListings || []);
+                    if (!data.favoriteListings || data.favoriteListings.length === 0) {
+                        setError('You have not added anything to your favorite list yet!');
                     } else {
-                        setError('You have not add anyting to your favorite list yet!');
+                        setFavoriteName(data.name);
                     }
                 } else if (currentUser.type === 'seller') {
+                    // Fetch listings for seller
                     const res = await fetch(`/api/user/listings/${currentUser._id}`);
                     const data = await res.json();
-                    if (!data) {
-                        setError('Failed to fetch seller listings');
-                    } else {
-                        setSellerListings(data);
+                    setSellerListings(data || []);
+                    if (!data || data.length === 0) {
+                        setError('You have no listings. Start by creating one!');
                     }
                 } else if (currentUser.type === 'admin') {
                     fetchAdminListings();
@@ -228,31 +230,33 @@ export default function FavoriteListings() {
     if (currentUser.type === 'admin') {
         return (
             <div>
-                <h1>All Listings</h1>
-                <div className="max-w-6xl mx-auto p-3 flex flex-col gap-8 my-10">
+                <h1 className="text-4xl font-bold mt-4 mb-6 text-slate-500 ml-4">All Listings</h1>
+                <div className='flex flex-wrap gap-4 ml-4'>
                     {adminListings.map(listing => (
-                        <div key={listing._id} className="flex justify-between items-center">
+                        <div key={listing._id} className="mb-4 w-full sm:w-[330px]">
                             <ListingItem listing={listing} />
-                            <div>
+                            <div className="flex justify-between mt-2">
                                 <Link to={`/update-listing/${listing._id}`}>
-                                    <button
-                                        className="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex-1"
-                                    >
+                                    <button className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex-1">
                                         Edit
                                     </button>
                                 </Link>
-                                <button
+                                <div className="flex-grow-0 mx-2"></div>
+                                <button 
                                     onClick={() => handleAdminListingDelete(listing._id)}
-                                    className="bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-600 flex-1"
-                                >
-                                    Remove
+                                    className="bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-600 flex-1">
+                                    Delete
                                 </button>
                             </div>
                         </div>
                     ))}
                 </div>
                 {hasMoreListings && adminListings.length >= loadedListingsCount && (
-                    <button onClick={loadMoreListings}>Load More</button>
+                    <div className="ml-4">
+                        <button onClick={loadMoreListings} className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-400">
+                            Load More
+                        </button>
+                    </div>
                 )}
             </div>
         );
