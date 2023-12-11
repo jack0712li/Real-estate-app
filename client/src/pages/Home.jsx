@@ -140,15 +140,16 @@ export default function Home() {
         {/* render recent listing of current user if role is seller*/}
 
         {currentUser && currentUser.type == "admin" && (
+          <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
           <div className="grid place-content-center rounded bg-gray-100 p-6 sm:p-8">
-            <div className="mx-auto max-w-md text-center lg:text-left">
+            <div className="mx-auto max-w-md text-center lg:text-center">
               <header>
                 <h2 className="text-xl font-bold text-gray-900 sm:text-3xl">
-                  Always be responsible for our users and listings!
+                  Manage users and listings here
                 </h2>
 
                 <p className="mt-4 text-gray-500">
-                  Manage users and listings here!
+                  Always be responsible for our users and listings!
                 </p>
               </header>
 
@@ -160,8 +161,8 @@ export default function Home() {
               </Link>
             </div>
           </div>
+        </div>
         )}
-
 
         {currentUser && currentUser.type !== "admin" && (
           <RecentActivity
