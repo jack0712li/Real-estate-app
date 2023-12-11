@@ -473,7 +473,7 @@ export default function Profile() {
             className="bg-red-500 text-white p-3 rounded-lg uppercase text-center hover:opacity-95 flex items-center gap-2 justify-center"
             to={`/personal`}
           >
-            View All Listings
+            Admin Portal
           </Link>
         )}
       </form>

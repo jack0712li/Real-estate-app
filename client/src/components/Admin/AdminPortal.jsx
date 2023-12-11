@@ -227,7 +227,7 @@ const AdminPortal = (props) => {
       key: "description",
       responsive: ["xl"],
       ...getColumnSearchProps("description"),
-      width: "30%",
+      width: "20%",
       render: (description) => {
         const defaultText = description ? description.slice(0, 100) : "N/A";
         const shouldExpand = description && description.length > 100;
@@ -280,7 +280,7 @@ const AdminPortal = (props) => {
       title: "Location",
       dataIndex: "location",
       key: "location",
-      responsive: ["md"],
+      responsive: ["lg"],
       ...getColumnSearchProps("location"),
       render: (location) => {
         return location || "N/A";
@@ -296,19 +296,6 @@ const AdminPortal = (props) => {
       sortDirections: ["descend", "ascend"],
       render: (createdAt) => {
         const formattedDate = new Date(createdAt).toLocaleString();
-        return formattedDate;
-      },
-    },
-    {
-      title: "Latest Update Date",
-      dataIndex: "updatedAt",
-      key: "updatedAt",
-      responsive: ["xl"],
-      ...getColumnSearchProps("updatedAt"),
-      sorter: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt),
-      sortDirections: ["descend", "ascend"],
-      render: (updatedAt) => {
-        const formattedDate = new Date(updatedAt).toLocaleString();
         return formattedDate;
       },
     },

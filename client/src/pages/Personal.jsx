@@ -251,14 +251,17 @@ export default function FavoriteListings() {
   if (currentUser.type === "admin") {
     return (
       <div>
-        <div className="">
+        <h1 className="text-4xl font-bold mt-4 mb-6 text-slate-500 ml-4">
+          Manage Users
+        </h1>
+        <div className="mx-4">
           <AdminPortal allUsers={allUsers} />
         </div>
         <div>
           <h1 className="text-4xl font-bold mt-4 mb-6 text-slate-500 ml-4">
-            All Listings
+            Manage All Listings
           </h1>
-          <div className="flex flex-wrap gap-4 ml-4">
+          <div className="flex flex-wrap gap-4 mx-4">
             {adminListings.map((listing) => (
               <div key={listing._id} className="mb-4 w-full sm:w-[330px]">
                 <ListingItem listing={listing} />
@@ -280,7 +283,7 @@ export default function FavoriteListings() {
             ))}
           </div>
           {hasMoreListings && adminListings.length >= loadedListingsCount && (
-            <div className="ml-4">
+            <div className="mx-4">
               <button
                 onClick={loadMoreListings}
                 className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-400"
