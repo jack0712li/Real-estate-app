@@ -432,7 +432,7 @@ export default function Profile() {
         </Link>
         {currentUser.type === "seller" && (
           <Link
-            className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
+            className="bg-blue-500 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
             to={"/create-listing"}
           >
             Create Listing
