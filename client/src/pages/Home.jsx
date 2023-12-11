@@ -135,41 +135,40 @@ export default function Home() {
             ))}
         </Swiper>
 
-        {/* listing results for offer, sale and rent */}
-
-        {/* render recent listing of current user if role is seller*/}
-
         {currentUser && currentUser.type == "admin" && (
           <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-          <div className="grid place-content-center rounded bg-gray-100 p-6 sm:p-8">
-            <div className="mx-auto max-w-md text-center lg:text-center">
-              <header>
-                <h2 className="text-xl font-bold text-gray-900 sm:text-3xl">
-                  Manage users and listings here
-                </h2>
+            <div className="grid place-content-center rounded bg-gray-100 p-6 sm:p-8">
+              <div className="mx-auto max-w-md text-center lg:text-center">
+                <header>
+                  <h2 className="text-xl font-bold text-gray-900 sm:text-3xl">
+                    Manage users and listings here
+                  </h2>
 
-                <p className="mt-4 text-gray-500">
-                  Always be responsible for our users and listings!
-                </p>
-              </header>
+                  <p className="mt-4 text-gray-500">
+                    Always be responsible for our users and listings!
+                  </p>
+                </header>
 
-              <Link
-                to={"/personal"}
-                className="mt-8 inline-block rounded border border-gray-900 bg-gray-900 px-12 py-3 text-sm font-medium text-white transition hover:shadow focus:outline-none focus:ring"
-              >
-                Admin Portal
-              </Link>
+                <Link
+                  to={"/personal"}
+                  className="mt-8 inline-block rounded border border-gray-900 bg-gray-900 px-12 py-3 text-sm font-medium text-white transition hover:shadow focus:outline-none focus:ring"
+                >
+                  Admin Portal
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
         )}
 
+        {/* render recent listing of current user if role is not admin*/}
         {currentUser && currentUser.type !== "admin" && (
           <RecentActivity
             recentActivity={recentActivity}
             role={currentUser.type}
           />
         )}
+
+        {/* listing results for offer, sale and rent */}
         <div className="max-w-6xl mx-auto p-3 flex flex-col gap-8 my-10">
           {offerListings && offerListings.length > 0 && (
             <div className="">

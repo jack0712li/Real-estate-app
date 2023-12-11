@@ -29,9 +29,9 @@ export default function OAuth() {
             localStorage.setItem('userId', data._id);
             dispatch(logInSuccess(data));
             if (data.isNewUser) {
-                navigate('/setrole');  // 新用户导航到角色选择页面
+                navigate('/setrole');  // New users navigate to role selection page
             } else {
-                navigate('/');  // 现有用户导航到主页或其他页面
+                navigate('/');  // Existing users navigate to the home page or other pages
             }
         }catch(error){
             console.log("could not sign in with google",error)

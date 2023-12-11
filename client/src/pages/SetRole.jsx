@@ -11,8 +11,8 @@ export default function ChooseRole() {
   const { currentUser, loading, error } = useSelector((state) => state.user);
 
   const handleRoleSelection = async (role) => {
-    // 这里发送请求到后端，更新用户的类型
-    // 假设用户ID存储在localStorage或通过其他方式获得
+    // Here a request is sent to the backend to update the user's type
+    // Assuming the user ID is stored in localStorage or obtained through other means
     const userId = localStorage.getItem('userId');
     try {
       dispatch(updateUserStart());
