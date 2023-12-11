@@ -59,7 +59,7 @@ export const deleteUser = async (req, res, next) => {
         if (req.user.type !== 'admin') {
             res.clearCookie('access_token');
         }
-        res.status(200).json('User has been deleted!');
+        res.status(200).json({ success: true, message: 'User deleted successfully' });
     } catch (error) {
         next(error);
     }
