@@ -138,6 +138,31 @@ export default function Home() {
         {/* listing results for offer, sale and rent */}
 
         {/* render recent listing of current user if role is seller*/}
+
+        {currentUser && currentUser.type == "admin" && (
+          <div className="grid place-content-center rounded bg-gray-100 p-6 sm:p-8">
+            <div className="mx-auto max-w-md text-center lg:text-left">
+              <header>
+                <h2 className="text-xl font-bold text-gray-900 sm:text-3xl">
+                  Always be responsible for our users and listings!
+                </h2>
+
+                <p className="mt-4 text-gray-500">
+                  Manage users and listings here!
+                </p>
+              </header>
+
+              <Link
+                to={"/personal"}
+                className="mt-8 inline-block rounded border border-gray-900 bg-gray-900 px-12 py-3 text-sm font-medium text-white transition hover:shadow focus:outline-none focus:ring"
+              >
+                Admin Portal
+              </Link>
+            </div>
+          </div>
+        )}
+
+
         {currentUser && currentUser.type !== "admin" && (
           <RecentActivity
             recentActivity={recentActivity}
