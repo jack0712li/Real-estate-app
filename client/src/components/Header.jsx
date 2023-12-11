@@ -2,6 +2,7 @@ import { FaSearch } from 'react-icons/fa';
 import { Link, useNavigate} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import { useEffect, useState } from 'react';
+import brandImage from '../image/brandImage.png';
 
 
 export default function Header() {
@@ -29,7 +30,8 @@ export default function Header() {
             <div className='flex justify-between items-center max-w-6xl mx-auto p-4'>
                 <Link to='/'>
                     <h1 className='font-bold text-xl sm:text-3xl flex flex-wrap'>
-                        <span className='text-white'>NewBoston</span>
+                        <img src={brandImage} alt="NewBoston Estate Logo" style={{ height: '2.5rem', width: 'auto' }}/> 
+                        <span className='text-white ml-2'>NewBoston</span>
                         <span className='text-indigo-500'>Estate</span>
                     </h1>
                 </Link>
