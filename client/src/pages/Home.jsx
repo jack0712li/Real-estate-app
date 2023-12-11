@@ -6,12 +6,12 @@ import { useSelector } from "react-redux";
 import SwiperCore from "swiper";
 import "swiper/css/bundle";
 import ListingItem from "../components/ListingItem";
-import SellerRecentListing from "../components/Home/sellerRecentListing";
+import RecentActivity from "../components/Home/RecentActivity";
 
 export default function Home() {
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const [offerListings, setOfferListings] = useState([]);
-  const [recentListings, setRecentListings] = useState([]);
+  const [recentActivity, setRecentActivity] = useState([]);
   const [saleListings, setSaleListings] = useState([]);
   const [rentListings, setRentListings] = useState([]);
 
@@ -61,24 +61,44 @@ export default function Home() {
       console.log(error);
     }
   };
+
+  const getFavoriteByUserId = async () => {
+    const FAVORITE_ENDPOINT = `/api/user/favorite/${currentUser._id}`;
+    const getFavoriteByUserIdURL = `${FAVORITE_ENDPOINT}?limit=2&sort=desc&sortBy=update`;
+    try {
+      const res = await fetch(getFavoriteByUserIdURL);
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     if (currentUser && currentUser.type === "seller") {
       getListingsByUserId().then((data) => {
-        setRecentListings(data);
+        setRecentActivity(data);
       });
     }
-  }, []);
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (currentUser && currentUser.type === "buyer") {
+      getFavoriteByUserId().then((data) => {
+        setRecentActivity(data);
+      });
+    }
+  }, [currentUser]);
 
   return (
     <div>
       {/* top */}
-      
+
       <div>
         <div className="flex flex-col gap-6 p-28 px-3 max-w-6xl mx-auto">
           <h1 className="text-slate-700 font-bold text-3xl lg:text-6xl">
             {currentUser ? `Hi, ${currentUser.username} 👋 ` : ""}
             {currentUser ? <br /> : ""}
-            
+
             Discover Your <span className="text-slate-500">Dream Home</span>
             <br />
             with <span className='text-gray-50 ml-2'>NewBoston </span>
@@ -118,10 +138,12 @@ export default function Home() {
         {/* listing results for offer, sale and rent */}
 
         {/* render recent listing of current user if role is seller*/}
-        {currentUser && currentUser.type === "seller" && (
-          <SellerRecentListing recentListings={recentListings} />
+        {currentUser && currentUser.type !== "admin" && (
+          <RecentActivity
+            recentActivity={recentActivity}
+            role={currentUser.type}
+          />
         )}
-
         <div className="max-w-6xl mx-auto p-3 flex flex-col gap-8 my-10">
           {offerListings && offerListings.length > 0 && (
             <div className="">
