@@ -8,11 +8,11 @@ export default function About() {
     <div className='container mx-auto px-4 md:px-12 py-20'>
       <h1 className='text-4xl md:text-5xl font-bold mb-10 text-center text-slate-800'>About NewBoston Estate</h1>
       <div className='flex flex-wrap justify-between -mx-4 bg-transparent'>
-        {/* 左侧区域：图片 */}
+
         <div className='md:w-1/2 px-4 mb-6 flex justify-center bg-transparent'>
           <img src={brandImage} alt="NewBoston Estate" className='w-full md:w-3/4 h-auto object-contain rounded-lg border-0 m-0 p-0 shadow-none'/>
         </div>
-        {/* 右侧区域：文字内容 */}
+
         <div className='md:w-1/2 px-4 flex flex-col justify-center'>
           <h2 className='text-2xl font-bold text-slate-800 mb-6'>Your Dream Home Awaits</h2>
             <p className='text-lg text-slate-700 mb-6'>
@@ -28,7 +28,7 @@ export default function About() {
             <p className='text-lg text-slate-700 mb-6'>
               Ready to find your dream home? Contact us today and let NewBoston Estate guide you home!
             </p>
-          {/* 联系和关注部分 */}
+
           <div>
             <h3 className='text-xl font-bold text-slate-800 mb-4'>Contributor</h3>
             <div className='flex flex-wrap'>
