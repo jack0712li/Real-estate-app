@@ -5,7 +5,7 @@ import { Navigation } from "swiper/modules";
 import { useSelector } from "react-redux";
 import SwiperCore from "swiper";
 import "swiper/css/bundle";
-import ListingItem from "../components/Listingitem";
+import ListingItem from "../components/ListingItem";
 import RecentActivity from "../components/Home/RecentActivity";
 
 export default function Home() {
