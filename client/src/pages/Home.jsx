@@ -98,21 +98,22 @@ export default function Home() {
           <h1 className="text-slate-700 font-bold text-3xl lg:text-6xl">
             {currentUser ? `Hi, ${currentUser.username} 👋 ` : ""}
             {currentUser ? <br /> : ""}
-            Find your next <span className="text-slate-500">perfect</span>
+            
+            Discover Your <span className="text-slate-500">Dream Home</span>
             <br />
-            place with ease
+            with <span className='text-gray-50 ml-2'>NewBoston </span>
+                        <span className='text-indigo-500'>Estate</span>
           </h1>
           <div className="text-gray-400 text-xs sm:text-sm">
-            NewBoston Estate is the best place to find your next perfect place to
-            live.
+            Explore a curated selection of residences with NewBoston Estate — your partner in finding the ideal space to call home.
             <br />
-            We have a wide range of properties for you to choose from.
+            Browse our extensive portfolio of properties tailored to suit every lifestyle.
           </div>
           <Link
             to={"/search"}
             className="text-xs sm:text-sm text-blue-800 font-bold hover:underline"
           >
-            Let's get started...
+            Begin your journey...
           </Link>
         </div>
 
