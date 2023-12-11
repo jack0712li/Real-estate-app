@@ -438,10 +438,18 @@ export default function Profile() {
             Create Listing
           </Link>
         )}
+        {currentUser.type === "seller" && (
+          <Link
+            className="bg-yellow-500 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
+            to={"/personal"}
+          >
+            Show Your Listing
+          </Link>
+        )}
         {currentUser.type === "buyer" && (
           <Link
             className="bg-red-500 text-white p-3 rounded-lg uppercase text-center hover:opacity-95 flex items-center gap-2 justify-center"
-            to={"/#"}
+            to={"/personal"}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -457,7 +465,7 @@ export default function Profile() {
                 d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
               />
             </svg>
-            Create Favourite List
+            Show Your Favourite List
           </Link>
         )}
         {currentUser.type === "admin" && (
@@ -485,16 +493,16 @@ export default function Profile() {
       <p className="text-green-700 mt-5">
         {updateSuccess ? "User is updated successfully!" : ""}
       </p>
-      {currentUser.type === "seller" && (
+      {/* {currentUser.type === "seller" && (
         <button onClick={handleShowListings} className="text-green-700 w-full">
           Show Listings
         </button>
-      )}
-      <p className="text-red-700 mt-5">
+      )} */}
+      {/* <p className="text-red-700 mt-5">
         {showListingsError ? "Error showing listings" : ""}
-      </p>
+      </p> */}
 
-      {userListings && userListings.length > 0 && (
+      {/* {userListings && userListings.length > 0 && (
         <div className="flex flex-col gap-4">
           <h1 className="text-center mt-7 text-2xl font-semibold">
             Your Listings
@@ -532,7 +540,7 @@ export default function Profile() {
             </div>
           ))}
         </div>
-      )}
+      )} */}
     </div>
   );
 

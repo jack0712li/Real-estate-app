@@ -44,9 +44,17 @@ export const updateUser = async (req, res, next) => {
 };
 
 export const deleteUser = async (req, res, next) => {
-    if (req.user.id !== req.params.id)
+    if (req.user.id !== req.params.id) {
         return next(errorHandler(401, 'You can only delete your own account!'));
+    }
     try {
+        await Listing.deleteMany({ userRef: req.params.id });
+
+        const user = await User.findById(req.params.id);
+        if (user && user.favorites) {
+            await Favorite.findByIdAndDelete(user.favorites);
+        }
+
         await User.findByIdAndDelete(req.params.id);
         res.clearCookie('access_token');
         res.status(200).json('User has been deleted!');
@@ -54,6 +62,7 @@ export const deleteUser = async (req, res, next) => {
         next(error);
     }
 };
+
 
 export const getUserListings = async (req, res, next) => {
     if (req.user.id === req.params.id) {
@@ -79,11 +88,22 @@ export const getUserFavoriteListings = async (req, res, next) => {
             if (!user.favorites) {
                 return res.status(200).json([]);
             }
+
+            const amount = parseInt(req.query.limit, 10);
+
+            const sort = req.query.sort || "desc";
+            const sortOrder = sort === "asc" ? 1 : -1;
+
+            const sortBy = req.query.sortBy || "create";
+            const sortByOptions = sortBy === "create" ? "createdAt" : "updatedAt";
+
             const favorite = await Favorite.findById(user.favorites._id);
 
-            const favoriteListings = await Listing.find({ '_id': { $in: favorite.listings } });
+            const favoriteListings = await Listing.find({ '_id': { $in: favorite.listings } })
+                .sort({ [sortByOptions]: sortOrder })
+                .limit(amount);
 
-            res.status(200).json({favoriteListings, name: favorite.name});
+            res.status(200).json({ favoriteListings, name: favorite.name });
         } catch (error) {
             next(error);
         }
