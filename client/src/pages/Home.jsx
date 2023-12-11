@@ -76,6 +76,9 @@ export default function Home() {
       <div>
         <div className="flex flex-col gap-6 p-28 px-3 max-w-6xl mx-auto">
           <h1 className="text-slate-700 font-bold text-3xl lg:text-6xl">
+            {currentUser ? `Hi, ${currentUser.username} 👋 ` : ""}
+            {currentUser ? <br /> : ""}
+            
             Discover Your <span className="text-slate-500">Dream Home</span>
             <br />
             with <span className='text-gray-50 ml-2'>NewBoston </span>
