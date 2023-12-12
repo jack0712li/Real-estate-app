@@ -3,20 +3,110 @@ import {
   CaretUpOutlined,
   CaretDownOutlined,
   DeleteOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
 import React, { useRef, useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Highlighter from "react-highlight-words";
-import { Button, Input, Space, Table, Popconfirm, Modal } from "antd";
+import {
+  Button,
+  Input,
+  Space,
+  Table,
+  Popconfirm,
+  Modal,
+  Form,
+  InputNumber,
+  Typography,
+} from "antd";
+import {
+  updateUserSuccess,
+  updateUserFailure,
+} from "../../redux/user/userSlice";
 import "./custom-button.css";
 
+const EditableCell = ({
+  editing,
+  dataIndex,
+  title,
+  inputType,
+  record,
+  index,
+  children,
+  ...restProps
+}) => {
+  const inputNode = inputType === "number" ? <InputNumber /> : <Input />;
+  return (
+    <td {...restProps}>
+      {editing ? (
+        <Form.Item
+          name={dataIndex}
+          style={{
+            margin: 0,
+          }}
+        >
+          {inputNode}
+        </Form.Item>
+      ) : (
+        children
+      )}
+    </td>
+  );
+};
+
 const AdminPortal = (props) => {
+  const { currentUser, loading, error } = useSelector((state) => state.user);
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
-  //   const { allUsers } = props;
+  const [form] = Form.useForm();
+  const [editingKey, setEditingKey] = useState("");
+  const isEditing = (record) => record._id === editingKey;
+  const dispatch = useDispatch();
+
+  const edit = (record) => {
+    form.setFieldsValue({
+      role: "",
+      avatar: "",
+      username: "",
+      firstname: "",
+      lastname: "",
+      description: "",
+      email: "",
+      location: "",
+      createdAt: "",
+      ...record,
+    });
+    setEditingKey(record._id);
+  };
+
+  const cancel = () => {
+    setEditingKey("");
+  };
+
+  const save = async (key) => {
+    try {
+      const row = await form.validateFields();
+      const newData = [...allUsers];
+      const index = newData.findIndex((item) => key === item._id);
+      if (index > -1) {
+        const item = newData[index];
+        const updateItemData = {
+          ...item,
+          ...row,
+        };
+
+        newData.splice(index, 1, updateItemData);
+
+        handleUpdateUser(updateItemData, newData);
+      }
+    } catch (errInfo) {
+      console.log("Validate Failed:", errInfo);
+    }
+  };
+
   const searchInput = useRef(null);
-  console.log(allUsers);
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     setSearchText(selectedKeys[0]);
@@ -30,6 +120,8 @@ const AdminPortal = (props) => {
   useEffect(() => {
     setAllUsers(props.allUsers);
   }, [props.allUsers]);
+
+  useEffect(() => {}, [allUsers]);
 
   const showModal = (title, content) => {
     Modal.error({
@@ -59,6 +151,41 @@ const AdminPortal = (props) => {
     } catch (err) {
       console.error(err);
       showModal("Failed to delete user", "Please try again later.");
+    }
+  };
+
+  const handleUpdateUser = async (updateItemData, newData) => {
+    try {
+      fetch(`/api/user/update/${updateItemData._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateItemData),
+      })
+        .then(async (res) => {
+          if (res.status === 200) {
+            setAllUsers(newData);
+            setEditingKey("");
+            const data = await res.json();
+            if (currentUser._id === updateItemData._id) {
+              dispatch(updateUserSuccess(data));
+            }
+            return data;
+          } else {
+            console.log("failed");
+            showModal("Failed to update user", "Please try again later.");
+            setEditingKey("");
+            return res.json();
+          }
+        })
+        .then((data) => {
+          console.log(data);
+        });
+    } catch (error) {
+      showModal("Failed to update user", "Please try again later.");
+      setEditingKey("");
+      console.log(error);
     }
   };
 
@@ -199,6 +326,7 @@ const AdminPortal = (props) => {
       title: "Username",
       dataIndex: "username",
       key: "username",
+      editable: true,
       ...getColumnSearchProps("username"),
     },
     {
@@ -206,6 +334,7 @@ const AdminPortal = (props) => {
       dataIndex: "firstname",
       key: "firstname",
       responsive: ["md"],
+      editable: true,
       ...getColumnSearchProps("firstname"),
       render: (firstname) => {
         return firstname || "N/A";
@@ -216,6 +345,7 @@ const AdminPortal = (props) => {
       dataIndex: "lastname",
       key: "lastname",
       responsive: ["md"],
+      editable: true,
       ...getColumnSearchProps("lastname"),
       render: (lastname) => {
         return lastname || "N/A";
@@ -226,6 +356,7 @@ const AdminPortal = (props) => {
       dataIndex: "description",
       key: "description",
       responsive: ["xl"],
+      editable: true,
       ...getColumnSearchProps("description"),
       width: "20%",
       render: (description) => {
@@ -274,6 +405,7 @@ const AdminPortal = (props) => {
       dataIndex: "email",
       key: "email",
       responsive: ["md"],
+      editable: true,
       ...getColumnSearchProps("email"),
     },
     {
@@ -281,6 +413,7 @@ const AdminPortal = (props) => {
       dataIndex: "location",
       key: "location",
       responsive: ["lg"],
+      editable: true,
       ...getColumnSearchProps("location"),
       render: (location) => {
         return location || "N/A";
@@ -302,22 +435,100 @@ const AdminPortal = (props) => {
     {
       title: "Action",
       key: "action",
-      render: (text, record) => (
-        <Popconfirm
-          title="Delete the user"
-          description="Are you sure you want to delete this user?"
-          onConfirm={() => handleDeleteUser(record._id)}
-          okText="Yes"
-          cancelText="No"
-        >
-          <Button type="danger" icon={<DeleteOutlined />} size="small">
-            Delete
-          </Button>
-        </Popconfirm>
-      ),
+      render: (text, record) => {
+        const editable = isEditing(record);
+
+        if (editable) {
+          return (
+            <div className="flex flex-col place-content-start">
+              <div style={{ paddingLeft: "7px" }}>
+                <Typography.Link
+                  onClick={() => save(record._id)}
+                  style={{
+                    marginRight: 8,
+                  }}
+                >
+                  <EditOutlined /> Save
+                </Typography.Link>
+                <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
+                  <a>Cancel</a>
+                </Popconfirm>
+              </div>
+              <div>
+                <Popconfirm
+                  title="Delete the user"
+                  description="Are you sure you want to delete this user?"
+                  onConfirm={() => handleDeleteUser(record._id)}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button type="link" icon={<DeleteOutlined />} size="small">
+                    Delete
+                  </Button>
+                </Popconfirm>
+              </div>
+            </div>
+          );
+        } else {
+          return (
+            <div className="flex flex-col place-content-start">
+              <div style={{ paddingLeft: "7px" }}>
+                <Typography.Link
+                  disabled={editingKey !== ""}
+                  onClick={() => edit(record)}
+                >
+                  <EditOutlined /> Edit
+                </Typography.Link>
+              </div>
+              <div>
+                <Popconfirm
+                  title="Delete the user"
+                  description="Are you sure you want to delete this user?"
+                  onConfirm={() => handleDeleteUser(record._id)}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button type="link" icon={<DeleteOutlined />} size="small">
+                    Delete
+                  </Button>
+                </Popconfirm>
+              </div>
+            </div>
+          );
+        }
+      },
     },
   ];
 
-  return <Table columns={columns} dataSource={allUsers} />;
+  const mergedColumns = columns.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: (record) => ({
+        record,
+        inputType: "text",
+        dataIndex: col.dataIndex,
+        title: col.title,
+        editing: isEditing(record),
+      }),
+    };
+  });
+  return (
+    <Form form={form} component={false}>
+      <Table
+        columns={mergedColumns}
+        dataSource={allUsers}
+        rowClassName="editable-row"
+        rowKey="_id"
+        components={{
+          body: {
+            cell: EditableCell,
+          },
+        }}
+      />
+    </Form>
+  );
 };
 export default AdminPortal;
