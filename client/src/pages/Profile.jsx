@@ -118,21 +118,30 @@ export default function Profile() {
   };
 
   const handleDeleteUser = async () => {
-    try {
-      dispatch(deleteUserStart());
-      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (data.success === false) {
-        dispatch(deleteUserFailure(data.message));
-        return;
-      }
-      dispatch(deleteUserSuccess(data));
-    } catch (error) {
-      dispatch(deleteUserFailure(error.message));
+    // Display a confirmation dialog
+    const isConfirmed = window.confirm("Are you sure you want to delete this?");
+
+    if (isConfirmed) {
+        // User confirmed the deletion
+        try {
+            dispatch(deleteUserStart());
+            const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+                method: "DELETE",
+            });
+            const data = await res.json();
+            if (data.success === false) {
+                dispatch(deleteUserFailure(data.message));
+                return;
+            }
+            dispatch(deleteUserSuccess(data));
+        } catch (error) {
+            dispatch(deleteUserFailure(error.message));
+        }
+    } else {
+        // User cancelled the deletion
+        console.log("Deletion cancelled by user.");
     }
-  };
+};
 
   const handleSignOut = async () => {
     try {
@@ -166,21 +175,28 @@ export default function Profile() {
   };
 
   const handleListingDelete = async (listingId) => {
-    try {
-      const res = await fetch(`/api/listing/delete/${listingId}`, {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (data.success === false) {
-        console.log(data.message);
-        return;
-      }
+    const isConfirmed = window.confirm("Are you sure you want to delete this?");
 
-      setUserListings((prev) =>
-        prev.filter((listing) => listing._id !== listingId)
-      );
-    } catch (error) {
-      console.log(error.message);
+    if (isConfirmed) {
+      try {
+        const res = await fetch(`/api/listing/delete/${listingId}`, {
+          method: "DELETE",
+        });
+        const data = await res.json();
+        if (data.success === false) {
+          console.log(data.message);
+          return;
+        }
+
+        setUserListings((prev) =>
+          prev.filter((listing) => listing._id !== listingId)
+        );
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+    else {
+      console.log("Deletion cancelled by user");
     }
   };
 

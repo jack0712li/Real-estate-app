@@ -89,44 +89,58 @@ export default function FavoriteListings() {
     );
 
   const handleDelete = async (listingId) => {
-    try {
-      const response = await fetch("/api/user/favorite/remove", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: currentUser._id, listingId }),
-      });
+    const isConfirmed = window.confirm("Are you sure you want to delete this?");
 
-      const data = await response.json();
-      if (response.ok) {
-        setFavoriteListings((prevListings) =>
-          prevListings.filter((listing) => listing._id !== listingId)
-        );
-      } else {
-        console.error(data.message);
-      }
-    } catch (error) {
-      console.error("Failed to remove favorite listing", error);
+    if (isConfirmed) {
+        try {
+        const response = await fetch("/api/user/favorite/remove", {
+            method: "DELETE",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ userId: currentUser._id, listingId }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            setFavoriteListings((prevListings) =>
+            prevListings.filter((listing) => listing._id !== listingId)
+            );
+        } else {
+            console.error(data.message);
+        }
+        } catch (error) {
+        console.error("Failed to remove favorite listing", error);
+        }
+    }
+    else {
+        console.log("Deletion cancelled by user.");
     }
   };
 
   const handleListingDelete = async (listingId) => {
-    try {
-      const res = await fetch(`/api/listing/delete/${listingId}`, {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (data.success === false) {
-        console.log(data.message);
-        return;
-      }
+    const isConfirmed = window.confirm("Are you sure you want to delete this?");
 
-      setSellerListings((prev) =>
-        prev.filter((listing) => listing._id !== listingId)
-      );
-    } catch (error) {
-      console.log(error.message);
+    if (isConfirmed) {
+        try {
+        const res = await fetch(`/api/listing/delete/${listingId}`, {
+            method: "DELETE",
+        });
+        const data = await res.json();
+        if (data.success === false) {
+            console.log(data.message);
+            return;
+        }
+
+        setSellerListings((prev) =>
+            prev.filter((listing) => listing._id !== listingId)
+        );
+        } catch (error) {
+        console.log(error.message);
+        }
+    }
+    else {
+        console.log("Deletion cancelled by user.");
     }
   };
 
@@ -165,20 +179,27 @@ export default function FavoriteListings() {
   };
 
   const handleAdminListingDelete = async (listingId) => {
-    try {
-      const res = await fetch(`/api/listing/delete/${listingId}`, {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (data.success === false) {
-        console.error(data.message);
-        return;
-      }
+    const isConfirmed = window.confirm("Are you sure you want to delete this?");
 
-      // Re-fetch listings to update the state
-      await fetchAdminListings();
-    } catch (error) {
-      console.error("Error deleting listing:", error);
+    if (isConfirmed) {
+        try {
+        const res = await fetch(`/api/listing/delete/${listingId}`, {
+            method: "DELETE",
+        });
+        const data = await res.json();
+        if (data.success === false) {
+            console.error(data.message);
+            return;
+        }
+
+        // Re-fetch listings to update the state
+        await fetchAdminListings();
+        } catch (error) {
+        console.error("Error deleting listing:", error);
+        }
+    }
+    else {
+        console.log("Deletion cancelled by user.");
     }
   };
 
