@@ -55,6 +55,7 @@ const EditableCell = ({
 };
 
 const AdminPortal = (props) => {
+  const { onUserDeleted } = props;
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -129,30 +130,28 @@ const AdminPortal = (props) => {
       content,
     });
   };
-
-  const handleDeleteUser = (userId) => {
+  const handleDeleteUser = async (userId) => {
     try {
-      fetch(`/api/user/delete/${userId}`, {
+      const res = await fetch(`/api/user/delete/${userId}`, {
         method: "DELETE",
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success) {
-            console.log(data);
-            setAllUsers((prevAllUsers) =>
-              prevAllUsers.filter((user) => user._id !== userId)
-            );
-          } else {
-            console.error(data.message);
-            showModal("Failed to delete user", "Please try again later.");
-          }
-        })
-        .catch((err) => console.error(err));
+      });
+      const data = await res.json();
+      if (data.success) {
+        console.log(data);
+        setAllUsers((prevAllUsers) =>
+          prevAllUsers.filter((user) => user._id !== userId)
+        );
+        await onUserDeleted();
+      } else {
+        console.error(data.message);
+        showModal("Failed to delete user", "Please try again later.");
+      }
     } catch (err) {
       console.error(err);
       showModal("Failed to delete user", "Please try again later.");
     }
   };
+  
 
   const handleUpdateUser = async (updateItemData, newData) => {
     try {

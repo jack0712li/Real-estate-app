@@ -255,7 +255,7 @@ export default function FavoriteListings() {
           Manage Users
         </h1>
         <div className="mx-4">
-          <AdminPortal allUsers={allUsers} />
+          <AdminPortal allUsers={allUsers} onUserDeleted={fetchAdminListings} />
         </div>
         <div>
           <h1 className="text-4xl font-bold mt-4 mb-6 text-slate-500 ml-4">
