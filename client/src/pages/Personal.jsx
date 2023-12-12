@@ -91,7 +91,7 @@ export default function FavoriteListings() {
   const handleDelete = async (listingId) => {
     try {
       const response = await fetch("/api/user/favorite/remove", {
-        method: "POST",
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
