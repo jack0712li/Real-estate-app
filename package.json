@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/jack0712li/Real-estate-app#readme",
   "dependencies": {
+    "@ant-design/icons": "^5.2.6",
+    "antd": "^5.12.2",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.3.1",
@@ -28,6 +30,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.2",
     "nodemon": "^3.0.1",
+    "react-highlight-words": "^0.20.0",
     "react-icons": "^4.12.0"
   }
 }
