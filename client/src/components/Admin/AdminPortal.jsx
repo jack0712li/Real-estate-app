@@ -89,6 +89,7 @@ const AdminPortal = (props) => {
   const save = async (key) => {
     try {
       const row = await form.validateFields();
+      row._id = key;
       const newData = [...allUsers];
       const index = newData.findIndex((item) => key === item._id);
       if (index > -1) {
@@ -100,7 +101,7 @@ const AdminPortal = (props) => {
 
         newData.splice(index, 1, updateItemData);
 
-        handleUpdateUser(updateItemData, newData);
+        handleUpdateUser(row, newData);
       }
     } catch (errInfo) {
       console.log("Validate Failed:", errInfo);
@@ -151,7 +152,6 @@ const AdminPortal = (props) => {
       showModal("Failed to delete user", "Please try again later.");
     }
   };
-  
 
   const handleUpdateUser = async (updateItemData, newData) => {
     try {
